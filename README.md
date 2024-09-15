@@ -10,7 +10,7 @@ Layoffs Dataset: This dataset includes information on layoffs across multiple in
 ### Tools Used
 SQL Server: Utilized for data cleaning, transformations, and conducting exploratory data analysis.
 
-# Part 1: Data Cleaning
+# Part 1: Data Cleaning 🧼
 
 ### Objective
 - **Goal**: Ensure data accuracy and consistency for meaningful analysis by removing duplicates, handling null values, and standardizing key columns
@@ -72,7 +72,7 @@ WHERE t2.industry IS NULL
 AND t1.industry IS NOT NULL
 ```
 
-#### 2.4 Removing Useless Rows and Columns
+#### 2.4 Removing Useless Rows and Columns 🧹🗑️
 - Removed rows where both `total_laid_off` and `percentage_laid_off` were marked as `NULL`
 - Dropped unnecessary columns after cleaning.
 
