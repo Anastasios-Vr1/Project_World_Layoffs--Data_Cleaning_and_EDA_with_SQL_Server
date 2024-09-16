@@ -121,10 +121,13 @@ WHERE total_laid_off IS NOT NULL
 ```sql
 SELECT TOP 5
 	company,
-	SUM(total_laid_off) AS total_laid_off
-FROM dbo.layoffs_staging
-GROUP BY company
-ORDER BY total_laid_off DESC
+	SUM(total_laid_off) as total_laid_off
+FROM
+	dbo.layoffs_staging
+GROUP BY 
+	company
+ORDER BY
+	total_laid_off DESC
 ```
 
 #### 2.3 Layoffs by Location (City)
@@ -132,12 +135,15 @@ ORDER BY total_laid_off DESC
 - There’s a **significant gap** between SF Bay Area (1st) and Seattle (2nd), with SF having 90,888 more layoffs.
 
 ```sql
-SELECT TOP 10
+SELECT TOP 10 
 	location, 
 	SUM(total_laid_off) AS total_laid_off_per_location
-FROM dbo.layoffs_staging
-GROUP BY location
-ORDER BY total_laid_off_per_location DESC
+FROM 
+	dbo.layoffs_staging
+GROUP BY 
+	location
+ORDER BY 2 DESC
+
 ```
 
 #### 2.4 Layoffs by Country
@@ -145,11 +151,15 @@ ORDER BY total_laid_off_per_location DESC
 - The top five countries are rounded out by the Netherlands, Sweden, and Brazil.
 
 ```sql
-SELECT country,
+SELECT
+	country,
 	SUM(total_laid_off) AS total_laid_off
-FROM dbo.layoffs_staging
-GROUP BY country
-ORDER BY total_laid_off DESC
+FROM
+	dbo.layoffs_staging
+GROUP BY
+	country
+ORDER BY
+	total_laid_off DESC
 ```
 
 #### 2.5 Layoffs by Year
@@ -157,11 +167,15 @@ ORDER BY total_laid_off DESC
 - The year 2020 saw 80,998 layoffs, likely due to the early pandemic impact, while 2021 had a sharp decrease (15,823), indicating some recovery.
 
 ```sql
-SELECT YEAR(date) AS year, 
+SELECT
+	YEAR(date) AS year, 
 	SUM(total_laid_off) AS total_laid_off
-FROM dbo.layoffs_staging
-GROUP BY YEAR(date)
-ORDER BY total_laid_off DESC
+FROM
+	dbo.layoffs_staging
+GROUP BY
+	YEAR(date)
+ORDER BY
+	total_laid_off DESC
 ```
 
 #### 2.6 Layoffs by Industry
@@ -170,11 +184,15 @@ ORDER BY total_laid_off DESC
 - Specialized sectors like **Legal**, **Energy**, and **Aerospace** experienced fewer layoffs, reflecting their resilience or smaller workforce.
 
 ```sql
-SELECT industry,
+SELECT
+	industry,
 	SUM(total_laid_off) AS total_laid_off
-FROM dbo.layoffs_staging
-GROUP BY industry
-ORDER BY total_laid_off DESC
+FROM
+	dbo.layoffs_staging
+GROUP BY
+	industry
+ORDER BY
+	total_laid_off DESC
 ```
 
 #### 2.7 Companies with Full Workforce Layoffs
@@ -182,23 +200,32 @@ ORDER BY total_laid_off DESC
 - Some notable examples include **OneWeb** and **BritishVolt**, which raised $3 billion and $2.4 billion, respectively, but still went out of business.
 
 ```sql
-SELECT stage, 
+SELECT
+	stage, 
 	COUNT(*) AS cnt
-FROM dbo.layoffs_staging
-WHERE percentage_laid_off = 1
-GROUP BY stage
-ORDER BY cnt DESC
+FROM
+	dbo.layoffs_staging
+WHERE
+	percentage_laid_off = 1
+GROUP BY
+	stage
+ORDER BY
+	cnt DESC
 ```
 
 #### 2.8 Layoffs per Month
 - **January** stands out with the highest number of layoffs (92,037), followed by **November** (55,758), likely due to seasonal adjustments or year-end restructuring efforts.
 
 ```sql
-SELECT MONTH(date) AS Months,
+SELECT
+	MONTH(date) AS Months,
 	SUM(total_laid_off) AS total_laid_off
-FROM dbo.layoffs_staging
-GROUP BY MONTH(date)
-ORDER BY Months ASC
+FROM
+	dbo.layoffs_staging
+GROUP BY
+	MONTH(date)
+ORDER BY
+	Months ASC
 ```
 
 #### 2.9 Companies with the Most Layoffs by Year (Top 5)
@@ -211,9 +238,13 @@ WITH year_cte AS (
         company,
         YEAR(date) AS year,
         SUM(total_laid_off) AS total_laid_off
-    FROM dbo.layoffs_staging
-    WHERE YEAR(date) IS NOT NULL
-    GROUP BY company, YEAR(date)
+    FROM
+	dbo.layoffs_staging
+    WHERE
+	YEAR(date) IS NOT NULL
+    GROUP BY
+	company,
+	YEAR(date)
 ), 
 Ranking_cte AS (
     SELECT *, DENSE_RANK() OVER (PARTITION BY year ORDER BY total_laid_off DESC) as d_rank
@@ -242,3 +273,23 @@ From the analysis of global layoffs data, several key trends and insights emerge
 This project provided valuable insights into global layoffs trends, highlighting the sectors and regions most affected by workforce reductions. By leveraging SQL Server for both data cleaning and exploratory data analysis, the analysis uncovered trends that reflect economic shifts and industry-specific challenges.
 
 The conclusions drawn from this project offer actionable insights into the industries most impacted by the economic slowdown. As the dataset continues to grow, there may be further opportunities to analyze additional trends, particularly with visualizations or deeper sector-specific analyses.
+
+
+SELECT 
+    job_title,
+    job_location,
+    job_schedule_type,
+    salary_year_avg,
+    job_posted_date,
+    name AS company_name
+FROM 
+    job_postings_fact
+LEFT JOIN company_dim
+    ON job_postings_fact.company_id = company_dim.company_id
+WHERE
+    job_location = 'Anywhere' AND
+    job_title_short = 'Data Analyst' AND
+    salary_year_avg IS NOT NULL
+ORDER BY 
+    salary_year_avg DESC
+LIMIT 10;
