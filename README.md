@@ -98,10 +98,6 @@ DROP COLUMN row_num
 
  **Note**: The complete set of queries and the detailed data cleaning process can be found in the accompanying SQL file in this repository: [Data_Cleaning_Project_World_layoffs.sql](Data_Cleaning_Project_World_layoffs.sql).
 
- Here’s **Part 2: Exploratory Data Analysis (EDA)**, organized into sections with your SQL queries and insights. I’ll maintain the formatting and structure you prefer, with concise bullet points and comments where necessary.
-
----
-
 ## Part 2: Exploratory Data Analysis (EDA)
 
 ### Objective
