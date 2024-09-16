@@ -273,23 +273,3 @@ From the analysis of global layoffs data, several key trends and insights emerge
 This project provided valuable insights into global layoffs trends, highlighting the sectors and regions most affected by workforce reductions. By leveraging SQL Server for both data cleaning and exploratory data analysis, the analysis uncovered trends that reflect economic shifts and industry-specific challenges.
 
 The conclusions drawn from this project offer actionable insights into the industries most impacted by the economic slowdown. As the dataset continues to grow, there may be further opportunities to analyze additional trends, particularly with visualizations or deeper sector-specific analyses.
-
-
-SELECT 
-    job_title,
-    job_location,
-    job_schedule_type,
-    salary_year_avg,
-    job_posted_date,
-    name AS company_name
-FROM 
-    job_postings_fact
-LEFT JOIN company_dim
-    ON job_postings_fact.company_id = company_dim.company_id
-WHERE
-    job_location = 'Anywhere' AND
-    job_title_short = 'Data Analyst' AND
-    salary_year_avg IS NOT NULL
-ORDER BY 
-    salary_year_avg DESC
-LIMIT 10;
