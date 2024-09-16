@@ -76,12 +76,10 @@ FROM
 	) AS Ranked_companies
 WHERE d_rnk < 6
 
-
-
-
+	
 -- Analyzing total employees laid off by location (city):
 
--- The top 3 cities with the highest layoffs— SF Bay Area, Seattle, and NYC—are all located in the U.S.
+-- The top 3 cities with the highest layoffsâ€” SF Bay Area, Seattle, and NYCâ€”are all located in the U.S.
 -- The gap between SF Bay Area (1st) and Seattle (2nd) is significant, with 90,888 more layoffs in SF
 -- Finally, 6 out of the top 10 cities with the highest layoffs are located in the U.S.
 
@@ -130,7 +128,6 @@ WHERE
 GROUP BY 
 	YEAR(date)
 ORDER BY 2 DESC
-
 
 
 -- Layoffs by industry analysis:
@@ -243,6 +240,7 @@ GROUP BY
 ORDER BY
 	Months ASC
 
+	
 -- Using a CTE to compute the "Rolling Total of Layoffs Per Month"
 -- This allows to track cumulative layoffs over time and analyze trends in workforce reductions.
 
