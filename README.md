@@ -98,12 +98,12 @@ DROP COLUMN row_num
 
  **Note**: The complete set of queries and the detailed data cleaning process can be found in the accompanying SQL file in this repository: [Data_Cleaning_Project_World_layoffs.sql](Data_Cleaning_Project_World_layoffs.sql).
 
-## Part 2: Exploratory Data Analysis (EDA)
+# Part 2: Exploratory Data Analysis (EDA) 🔍
 
 ### Objective
 - Analyze the cleaned data to uncover trends, patterns, and insights across industries, companies, and geographical locations affected by layoffs.
 
-### Key Insights
+### Key Insights💡
 
 #### 2.1 Highest Number of Layoffs in a Single Day
 - The **highest number of layoffs on a single day** was 12,000.
@@ -177,7 +177,7 @@ GROUP BY industry
 ORDER BY total_laid_off DESC
 ```
 
-#### 2.7 100% Layoffs per Company
+#### 2.7 Companies with Full Workforce Layoffs
 - The **majority of companies** where 100% of employees were laid off were startups, primarily in Series A to C funding stages.
 - Some notable examples include **OneWeb** and **BritishVolt**, which raised $3 billion and $2.4 billion, respectively, but still went out of business.
 
@@ -224,12 +224,12 @@ FROM Ranking_cte
 WHERE d_rank <= 5
 ```
 
-**Note**: The complete SQL queries and additional exploratory data analysis can be found in the accompanying SQL file in this repository: [Exploratory_Data_Analysis_Project_World_Layoffs.sql](Exploratory_Data_Analysis_Project_World_Layoffs.sql).)
+**Note**: The complete SQL queries and additional exploratory data analysis can be found in the accompanying SQL file in this repository: [Exploratory_Data_Analysis_Project_World_Layoffs.sql](Exploratory_Data_Analysis_Project_World_Layoffs.sql).
 
 
-# 3. Conclusions
+# 3. Conclusions 🖋️
 
-### Insights
+### Insights 
 From the analysis of global layoffs data, several key trends and insights emerged:
 
 1. **Tech Industry Dominance**: U.S. tech giants, such as Amazon, Google, and Microsoft, led the layoffs in both 2022 and 2023, reflecting significant post-pandemic adjustments.
@@ -238,7 +238,7 @@ From the analysis of global layoffs data, several key trends and insights emerge
 4. **Pandemic-Driven Layoffs**: Travel and hospitality companies, such as Uber and Booking.com, faced major layoffs in 2020 due to COVID-19, while other sectors showed more resilience.
 5. **Emerging Trends**: Increased layoffs in 2023 in sectors like Hardware and Marketing reflect ongoing market shifts and cost-cutting efforts.
 
-### Final Remarks
+### Final Remarks 
 This project provided valuable insights into global layoffs trends, highlighting the sectors and regions most affected by workforce reductions. By leveraging SQL Server for both data cleaning and exploratory data analysis, the analysis uncovered trends that reflect economic shifts and industry-specific challenges.
 
 The conclusions drawn from this project offer actionable insights into the industries most impacted by the economic slowdown. As the dataset continues to grow, there may be further opportunities to analyze additional trends, particularly with visualizations or deeper sector-specific analyses.
