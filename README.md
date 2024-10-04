@@ -1,6 +1,6 @@
 # Introduction
 ### Overview
-📊 **This project focuses on analyzing global layoffs data** in two parts: **data cleaning** and **exploratory data analysis (EDA)**. The dataset was sourced from **Kaggle**, and after an initial data cleaning phase, which involved **removing duplicates**, **fixing format issues**, and **handling missing values**, the cleaned data was used for analysis. 
+📊 **This project** focuses on analyzing global layoffs data in two parts: **data cleaning** and **exploratory data analysis (EDA)**. The dataset was sourced from **Kaggle**, and after an initial data cleaning phase, which involved **removing duplicates**, **fixing format issues**, and **handling missing values**, the cleaned data was used for analysis. 
 
 The exploratory data analysis uncovered **key trends and insights**, such as **industry-specific layoffs**, **company-wise impacts**, and **geographical distribution of layoffs**. Detailed steps for each part of the project are covered later in the readme.
 
