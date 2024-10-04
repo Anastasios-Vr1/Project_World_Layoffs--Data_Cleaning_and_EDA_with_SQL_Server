@@ -1,6 +1,8 @@
 # Introduction
 ### Overview
-📊This project focuses on analyzing global layoffs data in two parts: data cleaning and exploratory data analysis (EDA). The dataset was sourced from Kaggle, and after an initial data cleaning phase, which involved removing duplicates, fixing format issues, and handling missing values, the cleaned data was used for analysis. The exploratory data analysis uncovered key trends and insights, such as industry-specific layoffs, company-wise impacts, and geographical distribution of layoffs. Detailed steps for each part of the project are covered later in the readme.
+📊 **This project focuses on analyzing global layoffs data** in two parts: **data cleaning** and **exploratory data analysis (EDA)**. The dataset was sourced from **Kaggle**, and after an initial data cleaning phase, which involved **removing duplicates**, **fixing format issues**, and **handling missing values**, the cleaned data was used for analysis. 
+
+The exploratory data analysis uncovered **key trends and insights**, such as **industry-specific layoffs**, **company-wise impacts**, and **geographical distribution of layoffs**. Detailed steps for each part of the project are covered later in the readme.
 
 ##### 🔍 SQL queries? Check them out here: [Data Cleaning](Data_Cleaning_Project_World_layoffs.sql) & [Exploratory Data Analysis](Exploratory_Data_Analysis_Project_World_Layoffs.sql).
 
@@ -14,86 +16,149 @@ SQL Server: Utilized for data cleaning, transformations, and conducting explorat
 
 ### Objective
 - **Goal**: Ensure data accuracy and consistency for meaningful analysis by removing duplicates, handling null values, and standardizing key columns
-- **Focus**: Remove duplicates, handle null values, and standardize key columns.
   
 ### Steps Taken
+1. Created the Staging Table  
+2. Standardized the data  
+3. Handled NULL values, converted data types & applied a self-join to enhance highly correlated records with NULL values  
+4. Eliminated Useless Rows and Columns  
+5. Removed duplicates
+
 
 #### 1.1 Creating the Staging Table
-A staging table (layoffs_staging) was created to preserve the original data and safely perform data cleaning operations.
-The layoffs_staging table replicates the structure of the original dbo.layoffs table, and all data was copied into it for processing.
+A staging table (`layoffs_staging`) was created to preserve the original data and safely perform data cleaning operations.
+The `layoffs_staging` table replicates the structure of the original `layoffs` table, and all data was copied into it for processing.
 
 ```sql
 SELECT * 
 INTO layoffs_staging
-FROM dbo.layoffs
-
+FROM layoffs
 ```
 
-#### 1.2 Removing Duplicates
-- Used `ROW_NUMBER()` to identify duplicate rows based on key columns such as company, location, industry, total laid off, and other fields
-- Deleted all duplicate rows, keeping only the first occurrence for each group.
+### 1.2 Standardizing Data
+Fixing format issues: Addressed country data, standardizing "United States" and correcting location names like "Düsseldorf," "Florianópolis," and "Malmö."
+Industry data: Standardized industry names, such as combining "Crypto" and "Crypto Currency" into one.
 
 ```sql
-WITH cte_duplicates AS (
-  SELECT *, ROW_NUMBER() OVER(PARTITION BY
-                                  company,
-                                  location,
-                                  industry,
-                                  total_laid_off,
-                                  percentage_laid_off,
-                                  date,
-                                  stage,
-                                  country,
-                                  funds_raised_millions
-                          ORDER BY company ASC) AS row_num
-  FROM dbo.layoffs_staging
-)
-DELETE FROM cte_duplicates
-WHERE row_num > 1
-```
+UPDATE layoffs_staging
+SET country = 'United States'
+WHERE country LIKE 'United States.'
 
-#### 1.3 Standardizing Data and Converting Data Types
-- **Trimming spaces**: Cleaned unnecessary spaces in the `company` column
-- **Standardizing industry names**: Fixed inconsistent naming for industry categories like "Crypto" and "Crypto Currency"
-- **Correcting location names**: Updated non-standard location names (e.g., "Dusseldorf" to "Düsseldorf")
-- **Converting `date` column**: Converted `date` from `varchar` to `DATE` type after cleaning invalid date entries.
+UPDATE layoffs_staging
+SET location = 'Düsseldorf'
+WHERE location LIKE '%sseldorf'
 
-```sql
-UPDATE dbo.layoffs_staging
-SET company = TRIM(company)
-
-UPDATE dbo.layoffs_staging
+UPDATE layoffs_staging
 SET industry = 'Crypto'
 WHERE industry LIKE 'Crypto%'
+```
 
-ALTER TABLE dbo.layoffs_staging
+- **Trimming leading and trailing whitespace from columns for enhanced data integrity**
+
+```sql
+SELECT * FROM layoffs_staging
+
+UPDATE layoffs_staging
+SET
+	company = TRIM(company),
+	location = TRIM(location),
+	industry = TRIM(industry),
+	total_laid_off = TRIM(total_laid_off),
+    percentage_laid_off = TRIM(percentage_laid_off),
+    date = TRIM(date),
+    stage = TRIM(stage),
+	country = TRIM(country),
+	funds_raised_millions = TRIM(funds_raised_millions)
+```
+
+### 1.3 Handling & Standardizing NULL Values, Blanks
+
+- **Spotted interesting NULL values** in the `industry` column (Airbnb, Juul, Carvana, Bally's Interactive) and cleaned them.
+
+```sql
+UPDATE layoffs_staging
+SET industry = NULL
+WHERE industry IN ('Null', 'NULL', 'null', '')
+```
+
+- Cleaned `total_laid_off`, `percentage_laid_off`, `date`, `stage`, and `funds_raised_millions` columns by setting invalid values to `NULL`.
+
+```sql
+UPDATE layoffs_staging
+SET total_laid_off = NULL
+WHERE total_laid_off IN ('Null', 'NULL', 'null', '')
+
+UPDATE layoffs_staging
+SET percentage_laid_off = NULL
+WHERE percentage_laid_off IN ('Null', 'NULL', 'null', '')
+```
+
+- **Used a self-join** to populate missing `industry` values when the information was available for the same company elsewhere.
+
+```sql
+UPDATE layoff2
+SET layoff2.industry = layoff1.industry
+FROM layoffs_staging layoff2
+JOIN layoffs_staging layoff1
+ON layoff2.company = layoff1.company
+WHERE layoff2.industry IS NULL
+AND layoff1.industry IS NOT NULL
+```
+
+- **Converted data types** for important columns (`date` to `DATE`, `total_laid_off` to `INT`, `percentage_laid_off` and `funds_raised_millions` to `DECIMAL`).
+
+```sql
+ALTER TABLE layoffs_staging
 ALTER COLUMN date DATE
+
+ALTER TABLE layoffs_staging
+ALTER COLUMN total_laid_off INT
+
+ALTER TABLE layoffs_staging
+ALTER COLUMN percentage_laid_off DECIMAL
+
+ALTER TABLE layoffs_staging
+ALTER COLUMN funds_raised_millions DECIMAL
 ```
 
-#### 1.4 Handling Null Values
-- Identified rows with `NULL` or blank values in key columns like `industry`
-- Used a self-join to populate missing `industry` values from matching rows.
+
+### 1.4 Eliminating Useless Rows and Columns to Enhance Performance
+
+- Removed rows where both `total_laid_off` and `percentage_laid_off` were `NULL` to optimize performance
 
 ```sql
-UPDATE t2
-SET t2.industry = t1.industry
-FROM dbo.layoffs_staging t2
-JOIN dbo.layoffs_staging t1 ON t2.company = t1.company AND t2.location = t1.location
-WHERE t2.industry IS NULL
-AND t1.industry IS NOT NULL
+DELETE 
+FROM layoffs_staging
+WHERE total_laid_off IS NULL
+AND percentage_laid_off IS NULL
 ```
 
-#### 1.5 Removing Useless Rows and Columns 🧹🗑️
-- Removed rows where both `total_laid_off` and `percentage_laid_off` were marked as `NULL`
-- Dropped unnecessary columns after cleaning.
+### 1.5 Removing Duplicates
+
+- Used `ROW_NUMBER()` to identify and remove duplicate rows based on key columns like `company`, `location`, and `industry`
 
 ```sql
-DELETE FROM dbo.layoffs_staging
-WHERE total_laid_off = 'NULL'
-AND percentage_laid_off = 'NULL'
+WITH cte_duplicates AS
+(
+  SELECT *,
+    ROW_NUMBER() OVER(
+      PARTITION BY 
+        company, 
+        location, 
+        industry, 
+        total_laid_off, 
+        percentage_laid_off, 
+        date,
+        stage, 
+        country, 
+        funds_raised_millions 
+      ORDER BY company ASC) AS row_num
+  FROM layoffs_staging
+)
 
-ALTER TABLE dbo.layoffs_staging
-DROP COLUMN row_num
+DELETE 
+FROM cte_duplicates
+WHERE row_num > 1  -- Deletes duplicates where row number is greater than 1
 ```
 
  **Note**: The complete set of queries and the detailed data cleaning process can be found in the accompanying SQL file in this repository: [Data_Cleaning_Project_World_layoffs.sql](Data_Cleaning_Project_World_layoffs.sql).
