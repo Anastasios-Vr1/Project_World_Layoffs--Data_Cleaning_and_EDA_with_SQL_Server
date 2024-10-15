@@ -1,4 +1,6 @@
-# Introduction
+# Project World Layoffs - Data Cleaning & Exploratory Data Analysis
+<img src="https://github.com/Anastasios-Vr1/Project_World_Layoffs--Data_Cleaning_and_EDA_with_SQL_Server/blob/main/corp-world_layoffs%20.jpg" width="910" height="340">
+
 ### Overview
 📊 **This project** focuses on analyzing global layoffs data in two parts: **data cleaning** and **exploratory data analysis (EDA)**. The dataset was sourced from **Kaggle**, and after an initial data cleaning phase, which involved **removing duplicates**, **fixing format issues**, and **handling missing values**, the cleaned data was used for analysis. 
 
